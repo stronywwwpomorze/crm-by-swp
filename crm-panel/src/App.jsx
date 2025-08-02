@@ -3,52 +3,57 @@ import {
   Routes,
   Route,
   Navigate,
-  useNavigate,
 } from "react-router-dom";
 import LoginForm from "./components/LoginForm";
 import ClientForm from "./components/ClientForm";
 import ClientTable from "./components/ClientTable";
+import Navbar from "./components/Navbar";
 import { useState, useEffect } from "react";
 
 function App() {
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [refresh, setRefresh] = useState(false);
   const reloadClients = () => setRefresh(!refresh);
 
-  // Wczytaj token przy starcie
-  useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    if (savedToken) {
-      setToken(savedToken);
-    }
-  }, []);
-
-  // Obsługa wylogowania
-  const handleLogout = () => {
-    setToken(null);
-    localStorage.removeItem("token");
-  };
+  const isLoggedIn = !!token;
 
   return (
     <BrowserRouter>
+      {isLoggedIn && <Navbar />}
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<LoginForm onLogin={(t) => {
+          localStorage.setItem("token", t);
+          setToken(t);
+        }} />} />
         <Route
-          path="/login"
-          element={<LoginForm onLogin={(token) => {
-            setToken(token);
-            localStorage.setItem("token", token);
-          }} />}
-        />
-        <Route
-          path="/clients"
+          path="/dashboard"
           element={
-            token ? (
+            isLoggedIn ? (
               <>
-                <button onClick={handleLogout}>Wyloguj</button>
                 <ClientForm token={token} onClientAdded={reloadClients} />
                 <ClientTable key={refresh} token={token} />
               </>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/dodaj"
+          element={
+            isLoggedIn ? (
+              <ClientForm token={token} onClientAdded={reloadClients} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/lista"
+          element={
+            isLoggedIn ? (
+              <ClientTable key={refresh} token={token} />
             ) : (
               <Navigate to="/login" />
             )

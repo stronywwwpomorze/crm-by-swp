@@ -22,11 +22,33 @@ export default function ClientForm({ token, onClientAdded }) {
   };
 
   return (
-    <form onSubmit={handleAddClient}>
-      <h2>Dodaj klienta</h2>
-      <input placeholder="Numer klienta" value={clientNumber} onChange={(e) => setClientNumber(e.target.value)} />
-      <input placeholder="Nazwa klienta" value={name} onChange={(e) => setName(e.target.value)} />
-      <button type="submit">Dodaj</button>
-    </form>
-  );
+  <form onSubmit={handleAddClient} className="container mt-5 p-4 border rounded shadow-sm" style={{ maxWidth: "400px" }}>
+    <h2 className="text-center mb-4">Dodaj klienta</h2>
+
+    <div className="mb-3">
+      <input
+        type="text"
+        placeholder="Numer klienta"
+        value={clientNumber}
+        onChange={(e) => setClientNumber(e.target.value)}
+        className="form-control"
+      />
+    </div>
+
+    <div className="mb-3">
+      <input
+        type="text"
+        placeholder="Nazwa klienta"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        className="form-control"
+      />
+    </div>
+
+    <button type="submit" className="btn btn-success w-100">
+      Dodaj
+    </button>
+  </form>
+);
+
 }

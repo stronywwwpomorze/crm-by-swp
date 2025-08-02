@@ -20,10 +20,11 @@ export default function ClientTable({ token }) {
   }, []);
 
   return (
-    <div>
-      <h2>Lista klientów</h2>
-      <table border="1">
-        <thead>
+  <div className="container mt-5">
+    <h2 className="text-center mb-4">Lista klientów</h2>
+    <div className="table-responsive">
+      <table className="table table-bordered table-striped table-hover">
+        <thead className="table-primary text-center">
           <tr>
             <th>ID</th>
             <th>Numer</th>
@@ -41,5 +42,6 @@ export default function ClientTable({ token }) {
         </tbody>
       </table>
     </div>
-  );
+  </div>
+);
 }

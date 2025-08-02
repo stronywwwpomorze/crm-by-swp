@@ -35,29 +35,42 @@ function LoginForm({ onLogin }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Logowanie</h2>
+    <div className="d-flex justify-content-center align-items-center vh-100">
+      <form
+        onSubmit={handleSubmit}
+        className="p-4 border rounded shadow-sm text-center"
+        style={{ minWidth: "300px" }}
+      >
+        {/* LOGO + TYTUŁ */}
+        <img
+          src="https://stronywwwpomorze.pl/wp-content/uploads/2022/02/logo-strony-www-pomorze-pl-MIX-CZARNE-BIALE-280.png"
+          alt="Logo SWP"
+          className="mb-3"
+          style={{ width: "100px" }}
+        />
+        <h1 className="mb-4">CRM by SWP</h1>
+        <h2>Zaloguj</h2>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-
-      <input
-        type="password"
-        placeholder="Hasło"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-
-      <button type="submit">Zaloguj</button>
-
-      {error && <p style={{ color: "red" }}>{error}</p>}
-    </form>
+        {/* INPUTY */}
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="form-control mb-3"
+        />
+        <input
+          type="password"
+          placeholder="Hasło"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="form-control mb-3"
+        />
+        <button type="submit" className="btn btn-primary w-100">
+          Zaloguj
+        </button>
+      </form>
+    </div>
   );
 }
 
