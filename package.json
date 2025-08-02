@@ -1,0 +1,12 @@
+{
+  "name": "crm",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd crm-backend && node index.js",
+    "client": "cd crm-panel && npm run dev"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
