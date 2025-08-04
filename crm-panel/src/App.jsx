@@ -9,6 +9,7 @@ import ClientForm from "./components/ClientForm";
 import ClientTable from "./components/ClientTable";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar/Sidebar";
+import ClientDetails from "./components/ClientDetails";
 import { useState } from "react";
 
 function App() {
@@ -69,6 +70,16 @@ function App() {
               element={
                 isLoggedIn ? (
                   <ClientTable key={refresh} token={token} />
+                ) : (
+                  <Navigate to="/login" />
+                )
+              }
+            />
+            <Route
+              path="/klient/:id"
+              element={
+                isLoggedIn ? (
+                  <ClientDetails token={token} />
                 ) : (
                   <Navigate to="/login" />
                 )

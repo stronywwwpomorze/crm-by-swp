@@ -1,51 +1,90 @@
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const pool = require('../db');
-const router = express.Router();
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { FaLock } from "react-icons/fa";
 
-// Middleware autoryzacji
-function verifyToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  if (!authHeader) return res.sendStatus(401);
+export default function ClientDetails({ token }) {
+  const { id } = useParams();
+  const [client, setClient] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [newName, setNewName] = useState("");
 
-  const token = authHeader.split(' ')[1];
-  if (!token) return res.sendStatus(403);
+  useEffect(() => {
+    const fetchClient = async () => {
+      try {
+        const res = await axios.get(`http://localhost:3001/api/clients/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setClient(res.data);
+        setNewName(res.data.name);
+      } catch (err) {
+        console.error("Błąd pobierania klienta:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) return res.sendStatus(403);
-    req.user = decoded;
-    next();
-  });
+    fetchClient();
+  }, [id, token]);
+
+  const handleSave = async () => {
+    try {
+      await axios.put(
+        `http://localhost:3001/api/clients/${id}`,
+        { name: newName },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      alert("Zapisano zmiany");
+    } catch (err) {
+      console.error("Błąd zapisu:", err);
+      alert("Błąd podczas zapisu");
+    }
+  };
+
+  if (loading) return <div className="text-center mt-5">Ładowanie...</div>;
+  if (!client) return <div className="text-center mt-5">Nie znaleziono klienta</div>;
+
+  return (
+    <div className="container mt-5">
+      <h2 className="mb-4">Szczegóły klienta</h2>
+
+      {/* ID */}
+      <div className="mb-3">
+        <label className="form-label">ID</label>
+        <div className="input-group">
+          <span className="input-group-text bg-light">
+            <FaLock />
+          </span>
+          <input className="form-control bg-light" value={client.id} readOnly />
+        </div>
+      </div>
+
+      {/* Numer klienta */}
+      <div className="mb-3">
+        <label className="form-label">Numer klienta</label>
+        <div className="input-group">
+          <span className="input-group-text bg-light">
+            <FaLock />
+          </span>
+          <input
+            className="form-control bg-light"
+            value={client.client_number}
+            readOnly
+          />
+        </div>
+      </div>
+
+      {/* Nazwa klienta */}
+      <div className="mb-3">
+        <label className="form-label">Nazwa klienta</label>
+        <input
+          className="form-control"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+        />
+      </div>
+
+      <button className="btn btn-success mt-3">Zapisz</button>
+    </div>
+  );
 }
-
-// Lista klientów
-router.get('/', verifyToken, async (req, res) => {
-  const [rows] = await pool.query('SELECT * FROM clients ORDER BY created_at DESC');
-  res.json(rows);
-});
-
-// Dodaj klienta
-router.post('/', verifyToken, async (req, res) => {
-  const { client_number, name } = req.body;
-
-  if (!client_number || !name) {
-    return res.status(400).json({ message: 'Brakuje danych' });
-  }
-
-  await pool.query('INSERT INTO clients (client_number, name) VALUES (?, ?)', [client_number, name]);
-  res.json({ message: 'Klient dodany' });
-});
-
-// Pobieranie listy klientów
-router.get('/', async (req, res) => {
-  try {
-    const [rows] = await pool.query('SELECT * FROM clients');
-    res.json(rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Błąd serwera przy pobieraniu klientów' });
-  }
-});
-
-
-module.exports = router;
