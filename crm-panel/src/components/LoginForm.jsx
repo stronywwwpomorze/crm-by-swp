@@ -27,7 +27,7 @@ function LoginForm({ onLogin }) {
 
       localStorage.setItem("token", data.token);
       onLogin(data.token);             // <-- to ustawia token w App
-      navigate("/clients");            // <-- to przekierowuje
+      navigate("/dashboard");            // <-- to przekierowuje
     } catch (err) {
       console.error(err);
       setError("Błąd połączenia z serwerem");
